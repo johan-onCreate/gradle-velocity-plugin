@@ -72,6 +72,13 @@ public class VelocityPlugin implements Plugin<Project> {
                         return extension.filter;
                     }
                 });
+
+                task.conventionMapping("removeFileExtension", new Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        return extension.removeFileExtension;
+                    }
+                });
             }
         });
 

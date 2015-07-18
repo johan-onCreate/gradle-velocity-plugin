@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.SystemLogChute;
@@ -39,6 +41,7 @@ public class VelocityTask extends ConventionTask {
     private File outputDir;
 
     private String filter;
+    private String removeFileExtension;
     private List<File> includeDirs;
     private Map<String, Object> contextValues;
 
@@ -70,6 +73,16 @@ public class VelocityTask extends ConventionTask {
 
     public void setFilter(@CheckForNull String filter) {
         this.filter = filter;
+    }
+
+    @Input
+    @Optional
+    public String getRemoveFileExtension() {
+        return removeFileExtension;
+    }
+
+    public void setRemoveFileExtension(@CheckForNull String removeFileExtension) {
+        this.removeFileExtension = removeFileExtension;
     }
 
     @Input
@@ -138,7 +151,25 @@ public class VelocityTask extends ConventionTask {
             @Override
             public void visitFile(FileVisitDetails fvd) {
                 try {
+
                     File outputFile = fvd.getRelativePath().getFile(outputDir);
+
+                    String fileExtensionToRemove = getRemoveFileExtension();
+
+                    if (fileExtensionToRemove != null && fileExtensionToRemove.trim() != "") {
+                        String fileName = outputFile.getName();
+                        if (fileName.endsWith(fileExtensionToRemove)) {
+                            fileName = fileName.substring(0, fileName.length() - fileExtensionToRemove.length());
+                            outputFile = new File(outputFile.getParent(), fileName);
+                        }
+                        else
+                        {
+                            String logMsg = "File extension: " + fileExtensionToRemove +
+                                            " isn't applicable on file: " + outputFile.getAbsolutePath();
+                            getLogger().error(logMsg);
+                        }
+                    }
+
                     if (getLogger().isDebugEnabled())
                         getLogger().debug("Preprocessing " + fvd.getFile() + " -> " + outputFile);
                     VelocityContext context = new VelocityContext();

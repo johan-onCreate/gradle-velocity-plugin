@@ -19,6 +19,7 @@ into build/generated-sources/velocity:
 	velocity {
 		includeDir ...
 		filter = '**/*.vtl'
+		removeFileExtension = '.vtl'
 
 		context {
 			// Configure a HashMap with context values.

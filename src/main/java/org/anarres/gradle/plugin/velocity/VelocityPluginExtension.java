@@ -24,6 +24,7 @@ public class VelocityPluginExtension {
     public Object inputDir = DEFAULT_INPUT_DIR;
     public Object outputDir = DEFAULT_OUTPUT_DIR;
     public String filter = DEFAULT_FILTER_REGEX;
+    public String removeFileExtension;
     public List<Object> includeDirs = new ArrayList<Object>();
     public Map<String, Object> contextValues = new HashMap<String, Object>();
 
